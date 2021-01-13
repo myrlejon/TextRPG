@@ -7,13 +7,12 @@ namespace TextRPG
 {
     class Player : Unit
     {
-        public int healthmax;
         public Player()
         {
 
         }
 
-        public Player(string name, int level, int health, int experience, int gold, int strength, int toughness, int healthmax)
+        public Player(string name, int level, int health, int experience, int gold, int strength, int toughness, int healthmax, int experiencecap)
         {
             this.name = name;
             this.level = level;
@@ -23,12 +22,7 @@ namespace TextRPG
             this.strength = strength;
             this.toughness = toughness;
             this.healthmax = healthmax;
-        }
-
-        public int Healthmax
-        {
-            get { return healthmax; }
-            set { healthmax = value; }
+            this.experiencecap = experiencecap;
         }
     }
 }

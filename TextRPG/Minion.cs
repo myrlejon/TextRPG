@@ -11,7 +11,7 @@ namespace TextRPG
             
         }
 
-        public Minion(string name, int level, int health, int experience, int gold, int strength, int toughness)
+        public Minion(string name, int level, int health, int experience, int gold, int strength, int toughness, int healthmax)
         {
             this.name = name;
             this.level = level;
@@ -20,6 +20,7 @@ namespace TextRPG
             this.gold = gold;
             this.strength = strength;
             this.toughness = toughness;
+            this.healthmax = healthmax;
         }
     }
 }

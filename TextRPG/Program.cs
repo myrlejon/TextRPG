@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography.X509Certificates;
@@ -15,6 +16,8 @@ namespace TextRPG
         static Shop Potion = new Shop("Health potion", "A potion that heals the user for 50 health. Press P during combat to use it.", 0, 50);
         static Shop Amulet_Turtle = new Shop("Amulet of the Turtle", "An Amulet that grants the user 5 toughness", 0, 80);
         static Shop Amulet_Bear = new Shop("Amulet of the Bear", "An Amulet that grants the user 5 strength", 0, 95);
+
+        static List<Minion> monsterList = new List<Minion>() {Worm, Boar, Dragon};
 
         static void Main(string[] args)
         {
@@ -35,7 +38,7 @@ namespace TextRPG
 
                 if (menyInput == "1")
                 {
-                    Adventure();
+                    Fight();
                 }
                 else if (menyInput == "2")
                 {
@@ -104,34 +107,6 @@ namespace TextRPG
             }
         }
 
-
-        static void Adventure()
-        {
-            var random = new Random();
-            int randomEncounter = random.Next(1, 10);
-            //Här har spelaren en 10% chans att inte stöta på ett monster
-            if (randomEncounter == 1)
-            {
-                Console.WriteLine("You see nothing but swaying grass all around you...\n[Press enter to continue]\n");
-                Console.ReadKey();
-            }
-            else
-            {
-                if (randomEncounter <= 5 & User.Level >= 8)
-                {
-                    DragonFight();
-                }
-                else if (randomEncounter >= 5 & User.Level >= 5)
-                {
-                    BoarFight();
-                }
-                else
-                {
-                    WormFight();
-                }
-            }
-        }
-
         static void LevelUp()
         {
             User.Level++;
@@ -150,23 +125,46 @@ namespace TextRPG
             }
         }
 
-        static void WormFight()
+        static void Fight()
         {
+            int i = 0;
             var random = new Random();
+            int randomEncounter = random.Next(1, 10);
+            //Här har spelaren en 10% chans att inte stöta på ett monster
+            if (randomEncounter == 1)
+            {
+                Console.WriteLine("You see nothing but swaying grass all around you...\n[Press enter to continue]\n");
+                Console.ReadKey();
+            }
+            else
+            {
+                if (randomEncounter <= 5 & User.Level >= 8)
+                {
+                    i = 2;
+                }
+                else if (randomEncounter >= 5 & User.Level >= 5)
+                {
+                    i = 1;
+                }
+                else
+                {
+                    i = 0;
+                }
+            }
             bool loop = true;
-            Console.WriteLine($"A wild {Worm.Name} appeared!");
+            Console.WriteLine($"A wild {monsterList[i].Name} appeared!");
 
             while (loop == true)
             {
                 int playerDMG_RNG = random.Next(1, 5);
                 int minionDMG_RNG = random.Next(1, 5);
-                int playerDMG = playerDMG_RNG + User.Strength - Worm.Toughness;
-                int minionDMG = minionDMG_RNG + Worm.Strength - User.Toughness;
+                int playerDMG = playerDMG_RNG + User.Strength - monsterList[i].Toughness;
+                int minionDMG = minionDMG_RNG + monsterList[i].Strength - User.Toughness;
                 Console.WriteLine($"You hit the monster, dealing {playerDMG} damage!");
-                Worm.Health = Worm.Health - playerDMG;
-                Console.WriteLine($"The {Worm.Name} hit you, dealing {minionDMG} damage!");
+                monsterList[i].Health = monsterList[i].Health - playerDMG;
+                Console.WriteLine($"The {monsterList[i].Name} hit you, dealing {minionDMG} damage!");
                 User.Health = User.Health - minionDMG;
-                Console.WriteLine($"{User.Name}: {User.Health}hp\n{Worm.Name}: {Worm.Health}hp");
+                Console.WriteLine($"{User.Name}: {User.Health}hp\n{monsterList[i].Name}: {monsterList[i].Health}hp");
 
                 if (User.Health <= 0)
                 {
@@ -176,16 +174,16 @@ namespace TextRPG
                     loop = false;
 
                 }
-                else if (Worm.Health <= 0)
+                else if (monsterList[i].Health <= 0)
                 {
-                    Console.WriteLine($"You killed the monster! You gain {Worm.Experience} experience and {Worm.Gold} gold!");
-                    User.Experience = User.Experience + Worm.Experience;
-                    User.Gold = User.Gold + Worm.Gold;
+                    Console.WriteLine($"You killed the monster! You gain {monsterList[i].Experience} experience and {monsterList[i].Gold} gold!");
+                    User.Experience = User.Experience + monsterList[i].Experience;
+                    User.Gold = User.Gold + monsterList[i].Gold;
                     if (User.Experience >= User.Experiencecap)
                     {
                         LevelUp();
                     }
-                    Worm.Health = Worm.Healthmax;
+                    monsterList[i].Health = monsterList[i].Healthmax;
                     loop = false;
                 }
                 string input = Console.ReadLine();
@@ -194,100 +192,6 @@ namespace TextRPG
                     UsePotion();
                 }
             }
-        }
-        static void BoarFight()
-        {
-            var random = new Random();
-            bool loop = true;
-            Console.WriteLine($"A wild {Boar.Name} appeared!");
-
-            while (loop == true)
-            {
-                int playerDMG_RNG = random.Next(1, 5);
-                int minionDMG_RNG = random.Next(1, 5);
-                int playerDMG = playerDMG_RNG + User.Strength - Boar.Toughness;
-                int minionDMG = minionDMG_RNG + Boar.Strength - User.Toughness;
-                Console.WriteLine($"You hit the monster, dealing {playerDMG} damage!");
-                Boar.Health = Boar.Health - playerDMG;
-                Console.WriteLine($"The {Boar.Name} hit you, dealing {minionDMG} damage!");
-                User.Health = User.Health - minionDMG;
-                Console.WriteLine($"{User.Name}: {User.Health}hp\n{Boar.Name}: {Boar.Health}hp");
-
-
-                if (User.Health <= 0)
-                {
-                    Console.WriteLine("You were killed by the monster. Press any key to close the application.");
-                    Console.ReadKey();
-                    System.Environment.Exit(0);
-                    loop = false;
-
-                }
-                else if (Boar.Health <= 0)
-                {
-                    Console.WriteLine($"You killed the monster! You gain {Boar.Experience} experience and {Boar.Gold} gold!");
-                    User.Experience = User.Experience + Boar.Experience;
-                    User.Gold = User.Gold + Boar.Gold;
-                    if (User.Experience >= User.Experiencecap)
-                    {
-                        LevelUp();
-                    }
-                    Boar.Health = Boar.Healthmax;
-                    loop = false;
-                }
-                string input = Console.ReadLine();
-                if (input == "P" || input == "p")
-                {
-                    UsePotion();
-                }
-            }
-        }
-
-
-        static void DragonFight()
-        {
-            var random = new Random();
-            bool loop = true;
-            Console.WriteLine($"A wild {Dragon.Name} appeared!");
-
-            while (loop == true)
-            {
-                int playerDMG_RNG = random.Next(1, 5);
-                int minionDMG_RNG = random.Next(1, 5);
-                int playerDMG = playerDMG_RNG + User.Strength - Dragon.Toughness;
-                int minionDMG = minionDMG_RNG + Dragon.Strength - User.Toughness;
-                Console.WriteLine($"You hit the monster, dealing {playerDMG} damage!");
-                Dragon.Health = Dragon.Health - playerDMG;
-                Console.WriteLine($"The {Dragon.Name} hit you, dealing {minionDMG} damage!");
-                User.Health = User.Health - minionDMG;
-                Console.WriteLine($"{User.Name}: {User.Health}hp\n{Dragon.Name}: {Dragon.Health}hp");
-
-                if (User.Health <= 0)
-                {
-                    Console.WriteLine("You were killed by the monster. Press any key to close the application.");
-                    Console.ReadKey();
-                    System.Environment.Exit(0);
-                    loop = false;
-
-                }
-                else if (Dragon.Health <= 0)
-                {
-                    Console.WriteLine($"You killed the monster! You gain {Dragon.Experience} experience and {Dragon.Gold} gold!");
-                    User.Experience = User.Experience + Dragon.Experience;
-                    User.Gold = User.Gold + Dragon.Gold;
-                    if (User.Experience >= User.Experiencecap)
-                    {
-                        LevelUp();
-                    }
-                    Dragon.Health = Dragon.Healthmax;
-                    loop = false;
-                }
-                string input = Console.ReadLine();
-                if (input == "P" || input == "p")
-                {
-                    UsePotion();
-                }
-            }
-
         }
 
         static void UsePotion()

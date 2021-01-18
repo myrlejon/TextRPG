@@ -30,8 +30,13 @@ namespace TextRPG
             Console.Write("Enter your name: ");
             string nameInput = Console.ReadLine();
             User.Name = nameInput;
+            Menu();
+        }
+
+        static void Menu()
+        {
             bool loop = true;
-            while (loop = true)
+            while (true)
             {
                 Console.WriteLine("\n1. Go adventuring\n2. Show details about your character\n3. Buy items from the shop\n4. Exit game\n");
                 string menyInput = Console.ReadLine();
@@ -68,30 +73,34 @@ namespace TextRPG
                 {
                     Console.WriteLine($"{Potion.Description}\nAre you sure you want to buy this item? (Y/N)");
                     string decisionInput = Console.ReadLine();
-                    if (decisionInput == "Y")
+
+                    if (Potion.Total == 1)
+                    {
+                        Console.WriteLine("You already have this item!");
+                    }
+                    else if (decisionInput == "Y" || decisionInput == "y")
                     {
                         User.Gold = User.Gold - Potion.Price;
                         Potion.Total++;
                         Console.WriteLine($"You bought a {Potion.Name}!\nYou have {User.Gold} gold left.");
                     }
-                    else if (Potion.Total == 1)
-                    {
-                        Console.WriteLine("You already have this item!");
-                    }
+
                 }
                 else if (shopInput == "2" & User.Gold >= Amulet_Turtle.Price)
                 {
                     Console.WriteLine($"{Amulet_Turtle.Description}\nAre you sure you want to buy this item? (Y/N)");
                     string decisionInput = Console.ReadLine();
-                    if (decisionInput == "Y" & Amulet_Turtle.Total == 0)
+
+                    if (Amulet_Turtle.Total == 1)
+                    {
+                        Console.WriteLine("You already have this item!");
+                    }
+                    else if (decisionInput == "Y" & Amulet_Turtle.Total == 0)
                     {
                         User.Gold = User.Gold - Amulet_Turtle.Price;
                         Amulet_Turtle.Total++;
+                        User.Toughness = User.Toughness + 5;
                         Console.WriteLine($"You bought a {Amulet_Turtle.Name}!\nYou have {User.Gold} gold left.");
-                    }
-                    else if (Amulet_Turtle.Total == 1)
-                    {
-                        Console.WriteLine("You already have this item!");
                     }
                 }
 
@@ -135,6 +144,7 @@ namespace TextRPG
             {
                 Console.WriteLine("You see nothing but swaying grass all around you...\n[Press enter to continue]\n");
                 Console.ReadKey();
+                Menu();
             }
             else
             {
@@ -154,7 +164,7 @@ namespace TextRPG
             bool loop = true;
             Console.WriteLine($"A wild {monsterList[i].Name} appeared!");
 
-            while (loop == true)
+            while (loop)
             {
                 int playerDMG_RNG = random.Next(1, 5);
                 int minionDMG_RNG = random.Next(1, 5);
@@ -200,6 +210,11 @@ namespace TextRPG
             {
                 Potion.Total--;
                 User.Health = User.Health + 50;
+                if (User.Health >= User.Healthmax)
+                {
+                    User.Health = User.Healthmax;
+                }
+
                 Console.WriteLine($"You used an health potion! You now have {User.Health} health.");
             }
             else

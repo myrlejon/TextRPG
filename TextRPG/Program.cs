@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography.X509Certificates;
@@ -9,15 +10,18 @@ namespace TextRPG
 {
     class Program
     {
-        static Player User = new Player("", 1, 150, 0, 0, 5, 0, 150, 100);
-        static Minion Worm = new Minion("Giant worm", 1, 50, 35, 10, 3, 0, 50);
-        static Minion Boar = new Minion("Wild boar", 5, 120, 70, 25, 8, 2, 120);
-        static Minion Dragon = new Minion("Fiery Dragon", 8, 250, 120, 50, 15, 5, 250);
+        static Player User = new Player("", 1, 150, 0, 0, 5, 0, 5, 150, 100);
+        static Minion Worm = new Minion("Giant worm", 1, 50, 40, 10, 3, 0, 5, 50);
+        static Minion Rat = new Minion("Angry rat", 3, 80, 50, 15, 5, 1, 5, 80);
+        static Minion Boar = new Minion("Wild boar", 5, 120, 70, 25, 8, 2, 10, 120);
+        static Minion Dragon = new Minion("Fiery Dragon", 8, 250, 120, 50, 15, 5, 15, 250);
         static Shop Potion = new Shop("Health potion", "A potion that heals the user for 50 health. Press P during combat to use it.", 0, 50);
-        static Shop Amulet_Turtle = new Shop("Amulet of the Turtle", "An Amulet that grants the user 5 toughness", 0, 80);
-        static Shop Amulet_Bear = new Shop("Amulet of the Bear", "An Amulet that grants the user 5 strength", 0, 95);
+        static Shop Amulet_Turtle = new Shop("Amulet of the Turtle", "An Amulet that grants the user 5 toughness, which reduces damage to the user.", 0, 80);
+        static Shop Amulet_Bear = new Shop("Amulet of the Bear", "An Amulet that grants the user 5 strength, which results in more damage to the opponent.", 0, 95);
+        static Shop Lucky_Charm = new Shop("Lucky charm", "An Ancient coin that grants the user 5 luck, which increases the odds of critical strikes.", 0, 120);
 
-        static List<Minion> monsterList = new List<Minion>() {Worm, Boar, Dragon};
+        static List<Minion> monsterList = new List<Minion>() {Worm, Rat, Boar, Dragon};
+        static List<Shop> shopList = new List<Shop>() {Potion, Amulet_Turtle, Amulet_Bear, Lucky_Charm};
 
         static void Main(string[] args)
         {
@@ -53,59 +57,60 @@ namespace TextRPG
                 {
                     Shop();
                 }
+                else if (menyInput == "4")
+                {
+                    System.Environment.Exit(0);
+                }
             }
 
             void Stats()
             {
-                Console.WriteLine($"*************************\n*\tName: {User.Name}\t*\n*\tLevel: {User.Level}\t*\n*\tHp: {User.Health}/{User.Healthmax}\t*\n*\tExp: {User.Experience}/{User.Experiencecap}\t*\n*\tGold: {User.Gold} \t*\n*\tStrength: {User.Strength}\t*\n*\tToughness: {User.Toughness}\t*\n*************************\n\nPress any key to return to the main menu...");
+                Console.WriteLine($"*************************\n*\tName: {User.Name}\t*\n*\tLevel: {User.Level}\t*\n*\tHp: {User.Health}/{User.Healthmax}\t*\n*\tExp: {User.Experience}/{User.Experiencecap}\t*\n*\tGold: {User.Gold} \t*\n*\tStrength: {User.Strength}\t*\n*\tToughness: {User.Toughness}\t*\n*************************\n");
+                Console.WriteLine($"*************************\n {Potion.Name}: {Potion.Total}\n {Amulet_Turtle.Name}: {Amulet_Turtle.Total}\n {Amulet_Bear.Name}: {Amulet_Bear.Total}\n {Lucky_Charm.Name}: {Lucky_Charm.Total}\n*************************\n\nPress any key to return to the main menu...");
                 Console.ReadKey();
+            }
+        }
+
+        static void Buy(int i)
+        {
+            Console.WriteLine($"{shopList[i].Description}\nAre you sure you want to buy this item? (Y/N)");
+            string decisionInput = Console.ReadLine();
+
+            if (shopList[i].Total == 1)
+            {
+                Console.WriteLine("You already have this item!");
+            }
+            else if (decisionInput == "Y" || decisionInput == "y")
+            {
+                User.Gold = User.Gold - shopList[i].Price;
+                shopList[i].Total++;
+                Console.WriteLine($"You bought a {shopList[i].Name}!\nYou have {User.Gold} gold left.");
+                if (i == 1)
+                { User.Toughness+=5; }
+                else if (i == 2)
+                { User.Strength+=5; }
+                else if (i == 3)
+                { User.Luck+= 5; }
             }
         }
 
         static void Shop()
         {
+            int i = 0;
             bool loop = true;
             while (loop)
             {
-                Console.WriteLine($"***************************************************************************\n\n\tWelcome to the shop traveler, what would you like to buy today?\n\n1. {Potion.Name} [{Potion.Price}g]\n\n2. {Amulet_Turtle.Name} [{Amulet_Turtle.Price}g]\n\n3. {Amulet_Bear.Name} [{Amulet_Bear.Price}g]\n\n4. Exit the shop.\n\n***************************************************************************");
+                Console.WriteLine($"***************************************************************************\n\n\tWelcome to the shop traveler, what would you like to buy today?\n\n1. {Potion.Name} [{Potion.Price}g]\n\n2. {Amulet_Turtle.Name} [{Amulet_Turtle.Price}g]\n\n3. {Amulet_Bear.Name} [{Amulet_Bear.Price}g]\n\n4. {Lucky_Charm.Name} [{Lucky_Charm.Price}]\n\n5. Exit the shop.\t\t\t\tGold: {User.Gold}\n\n***************************************************************************");
                 string shopInput = Console.ReadLine();
                 if (shopInput == "1" & User.Gold >= Potion.Price)
-                {
-                    Console.WriteLine($"{Potion.Description}\nAre you sure you want to buy this item? (Y/N)");
-                    string decisionInput = Console.ReadLine();
-
-                    if (Potion.Total == 1)
-                    {
-                        Console.WriteLine("You already have this item!");
-                    }
-                    else if (decisionInput == "Y" || decisionInput == "y")
-                    {
-                        User.Gold = User.Gold - Potion.Price;
-                        Potion.Total++;
-                        Console.WriteLine($"You bought a {Potion.Name}!\nYou have {User.Gold} gold left.");
-                    }
-
-                }
+                { Buy(0); }
                 else if (shopInput == "2" & User.Gold >= Amulet_Turtle.Price)
-                {
-                    Console.WriteLine($"{Amulet_Turtle.Description}\nAre you sure you want to buy this item? (Y/N)");
-                    string decisionInput = Console.ReadLine();
-
-                    if (Amulet_Turtle.Total == 1)
-                    {
-                        Console.WriteLine("You already have this item!");
-                    }
-                    else if (decisionInput == "Y" & Amulet_Turtle.Total == 0)
-                    {
-                        User.Gold = User.Gold - Amulet_Turtle.Price;
-                        Amulet_Turtle.Total++;
-                        User.Toughness = User.Toughness + 5;
-                        Console.WriteLine($"You bought a {Amulet_Turtle.Name}!\nYou have {User.Gold} gold left.");
-                    }
-                }
-
-
-                else if (shopInput == "4")
+                { Buy(1); }
+                else if (shopInput == "3" & User.Gold >= Amulet_Bear.Price)
+                { Buy(2); }
+                else if (shopInput == "4" & User.Gold >= Lucky_Charm.Price)
+                { Buy(3); }
+                else if (shopInput == "5")
                 {
                     loop = false;
                 }
@@ -120,7 +125,6 @@ namespace TextRPG
         {
             User.Level++;
             User.Strength++;
-            User.Toughness++;
             User.Experience = User.Experience - User.Experiencecap;
             User.Experiencecap = User.Experiencecap + 50;
             int healthCap = 10 * (User.Level - 1);
@@ -146,30 +150,33 @@ namespace TextRPG
                 Console.ReadKey();
                 Menu();
             }
+            //i är platsen i monsterList. 0 = Worm, 1 = Rat, 2 = Boar och 3 = Drake.
             else
             {
                 if (randomEncounter <= 5 & User.Level >= 8)
-                {
-                    i = 2;
-                }
+                { i = 3; }
                 else if (randomEncounter >= 5 & User.Level >= 5)
-                {
-                    i = 1;
-                }
+                { i = 2; }
+                else if (randomEncounter <= 5 & User.Level >= 3)
+                { i = 1; }
                 else
-                {
-                    i = 0;
-                }
+                { i = 0; }
             }
             bool loop = true;
             Console.WriteLine($"A wild {monsterList[i].Name} appeared!");
 
             while (loop)
             {
-                int playerDMG_RNG = random.Next(1, 5);
-                int minionDMG_RNG = random.Next(1, 5);
+                int playerDMG_RNG = random.Next(1, User.Luck);
+                int minionDMG_RNG = random.Next(1, monsterList[i].Luck);
                 int playerDMG = playerDMG_RNG + User.Strength - monsterList[i].Toughness;
                 int minionDMG = minionDMG_RNG + monsterList[i].Strength - User.Toughness;
+                if (playerDMG <= 0)
+                { playerDMG = 0; }
+                else if (minionDMG <= 0)
+                { minionDMG = 0; }
+
+
                 Console.WriteLine($"You hit the monster, dealing {playerDMG} damage!");
                 monsterList[i].Health = monsterList[i].Health - playerDMG;
                 Console.WriteLine($"The {monsterList[i].Name} hit you, dealing {minionDMG} damage!");
@@ -206,7 +213,7 @@ namespace TextRPG
 
         static void UsePotion()
         {
-            if (Potion.Total == 1)
+            if (Potion.Total == 1 & User.Level < 4)
             {
                 Potion.Total--;
                 User.Health = User.Health + 50;
@@ -214,7 +221,16 @@ namespace TextRPG
                 {
                     User.Health = User.Healthmax;
                 }
-
+                Console.WriteLine($"You used an health potion! You now have {User.Health} health.");
+            }
+            else if (Potion.Total == 1 & User.Level >= 5)
+            {
+                Potion.Total--;
+                User.Health = User.Health + 100;
+                if (User.Health >= User.Healthmax)
+                {
+                    User.Health = User.Healthmax;
+                }
                 Console.WriteLine($"You used an health potion! You now have {User.Health} health.");
             }
             else

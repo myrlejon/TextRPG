@@ -12,7 +12,7 @@ namespace TextRPG
 
         }
 
-        public Player(string name, int level, int health, int experience, int gold, int strength, int toughness, int healthmax, int experiencecap)
+        public Player(string name, int level, int health, int experience, int gold, int strength, int toughness, int luck, int healthmax, int experiencecap)
         {
             this.name = name;
             this.level = level;
@@ -21,6 +21,7 @@ namespace TextRPG
             this.gold = gold;
             this.strength = strength;
             this.toughness = toughness;
+            this.luck = luck;
             this.healthmax = healthmax;
             this.experiencecap = experiencecap;
         }

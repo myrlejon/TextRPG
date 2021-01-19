@@ -16,6 +16,7 @@ namespace TextRPG
         public int toughness;
         public int healthmax;
         public int experiencecap;
+        public int luck;
    
     public Unit()
         {
@@ -85,7 +86,12 @@ namespace TextRPG
        {
             get { return experiencecap; }
             set { experiencecap = value; }
-      }
+       }
+    public int Luck
+        {
+            get { return luck; }
+            set { luck = value; }
+        }
     }
 
    

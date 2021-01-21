@@ -12,16 +12,17 @@ namespace TextRPG
     {
         static Player User = new Player("", 1, 150, 0, 0, 5, 0, 5, 150, 100);
         static Minion Worm = new Minion("Giant worm", 1, 50, 40, 10, 3, 0, 5, 50);
-        static Minion Rat = new Minion("Angry rat", 3, 80, 50, 15, 5, 1, 5, 80);
-        static Minion Boar = new Minion("Wild boar", 5, 120, 70, 25, 8, 2, 10, 120);
-        static Minion Dragon = new Minion("Fiery Dragon", 8, 250, 120, 50, 15, 5, 15, 250);
+        static Minion Rat = new Minion("Angry rat", 3, 80, 50, 20, 5, 1, 5, 80);
+        static Minion Boar = new Minion("Wild boar", 5, 120, 70, 30, 8, 2, 10, 120);
+        static Minion Dragon = new Minion("Fiery Dragon", 8, 250, 120, 100, 15, 5, 15, 250);
         static Shop Potion = new Shop("Health potion", "A potion that heals the user for 50 health. Press P during combat to use it.", 0, 50);
         static Shop Amulet_Turtle = new Shop("Amulet of the Turtle", "An Amulet that grants the user 5 toughness, which reduces damage to the user.", 0, 80);
         static Shop Amulet_Bear = new Shop("Amulet of the Bear", "An Amulet that grants the user 5 strength, which results in more damage to the opponent.", 0, 95);
         static Shop Lucky_Charm = new Shop("Lucky charm", "An Ancient coin that grants the user 5 luck, which increases the odds of critical strikes.", 0, 120);
+        static Shop Dragon_Slayer = new Shop("Dragon Slayer", "A very heavy sword that grants the user 20 strength, which results in more damage to the opponent.", 0, 200);
 
         static List<Minion> monsterList = new List<Minion>() {Worm, Rat, Boar, Dragon};
-        static List<Shop> shopList = new List<Shop>() {Potion, Amulet_Turtle, Amulet_Bear, Lucky_Charm};
+        static List<Shop> shopList = new List<Shop>() {Potion, Amulet_Turtle, Amulet_Bear, Lucky_Charm, Dragon_Slayer};
 
         static void Main(string[] args)
         {
@@ -34,7 +35,18 @@ namespace TextRPG
             Console.Write("Enter your name: ");
             string nameInput = Console.ReadLine();
             User.Name = nameInput;
+            if (nameInput == "Nils" || nameInput == "Robin")
+            {
+                GodMode();
+            }
             Menu();
+        }
+
+        static void GodMode()
+        {
+            User.Strength += 50;
+            User.Toughness += 50;
+            User.Luck += 50;
         }
 
         static void Menu()
@@ -46,27 +58,19 @@ namespace TextRPG
                 string menyInput = Console.ReadLine();
 
                 if (menyInput == "1")
-                {
-                    Fight();
-                }
+                { Fight(); }
                 else if (menyInput == "2")
-                {
-                    Stats();
-                }
+                { Stats(); }
                 else if (menyInput == "3")
-                {
-                    Shop();
-                }
+                { Shop(); }
                 else if (menyInput == "4")
-                {
-                    System.Environment.Exit(0);
-                }
+                { System.Environment.Exit(0); }
             }
 
             void Stats()
             {
                 Console.WriteLine($"*************************\n*\tName: {User.Name}\t*\n*\tLevel: {User.Level}\t*\n*\tHp: {User.Health}/{User.Healthmax}\t*\n*\tExp: {User.Experience}/{User.Experiencecap}\t*\n*\tGold: {User.Gold} \t*\n*\tStrength: {User.Strength}\t*\n*\tToughness: {User.Toughness}\t*\n*************************\n");
-                Console.WriteLine($"*************************\n {Potion.Name}: {Potion.Total}\n {Amulet_Turtle.Name}: {Amulet_Turtle.Total}\n {Amulet_Bear.Name}: {Amulet_Bear.Total}\n {Lucky_Charm.Name}: {Lucky_Charm.Total}\n*************************\n\nPress any key to return to the main menu...");
+                Console.WriteLine($"*************************\n {Potion.Name}: {Potion.Total}\n {Amulet_Turtle.Name}: {Amulet_Turtle.Total}\n {Amulet_Bear.Name}: {Amulet_Bear.Total}\n {Lucky_Charm.Name}: {Lucky_Charm.Total}\n {Dragon_Slayer.Name}: {Dragon_Slayer.Total}\n*************************\n\nPress any key to return to the main menu...");
                 Console.ReadKey();
             }
         }
@@ -86,11 +90,13 @@ namespace TextRPG
                 shopList[i].Total++;
                 Console.WriteLine($"You bought a {shopList[i].Name}!\nYou have {User.Gold} gold left.");
                 if (i == 1)
-                { User.Toughness+=5; }
+                { User.Toughness +=5; }
                 else if (i == 2)
-                { User.Strength+=5; }
+                { User.Strength +=5; }
                 else if (i == 3)
-                { User.Luck+= 5; }
+                { User.Luck += 5; }
+                else if (i == 4)
+                { User.Strength += 20; }
             }
         }
 
@@ -100,7 +106,7 @@ namespace TextRPG
             bool loop = true;
             while (loop)
             {
-                Console.WriteLine($"***************************************************************************\n\n\tWelcome to the shop traveler, what would you like to buy today?\n\n1. {Potion.Name} [{Potion.Price}g]\n\n2. {Amulet_Turtle.Name} [{Amulet_Turtle.Price}g]\n\n3. {Amulet_Bear.Name} [{Amulet_Bear.Price}g]\n\n4. {Lucky_Charm.Name} [{Lucky_Charm.Price}]\n\n5. Exit the shop.\t\t\t\tGold: {User.Gold}\n\n***************************************************************************");
+                Console.WriteLine($"***************************************************************************\n\n\tWelcome to the shop traveler, what would you like to buy today?\n\n1. {Potion.Name} [{Potion.Price}g]\n\n2. {Amulet_Turtle.Name} [{Amulet_Turtle.Price}g]\n\n3. {Amulet_Bear.Name} [{Amulet_Bear.Price}g]\n\n4. {Lucky_Charm.Name} [{Lucky_Charm.Price}]\n\n5. {Dragon_Slayer.Name}: [{Dragon_Slayer.Price}]\n\n6. Exit the shop.\t\t\t\tGold: {User.Gold}\n\n***************************************************************************");
                 string shopInput = Console.ReadLine();
                 if (shopInput == "1" & User.Gold >= Potion.Price)
                 { Buy(0); }
@@ -110,7 +116,9 @@ namespace TextRPG
                 { Buy(2); }
                 else if (shopInput == "4" & User.Gold >= Lucky_Charm.Price)
                 { Buy(3); }
-                else if (shopInput == "5")
+                else if (shopInput == "5" & User.Gold >= Dragon_Slayer.Price)
+                { Buy(4); }
+                else if (shopInput == "6")
                 {
                     loop = false;
                 }
@@ -213,7 +221,7 @@ namespace TextRPG
 
         static void UsePotion()
         {
-            if (Potion.Total == 1 & User.Level < 4)
+            if (Potion.Total == 1 & User.Level <= 4)
             {
                 Potion.Total--;
                 User.Health = User.Health + 50;

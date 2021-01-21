@@ -51,7 +51,6 @@ namespace TextRPG
 
         static void Menu()
         {
-            bool loop = true;
             while (true)
             {
                 Console.WriteLine("\n1. Go adventuring\n2. Show details about your character\n3. Buy items from the shop\n4. Exit game\n");
@@ -69,7 +68,7 @@ namespace TextRPG
 
             void Stats()
             {
-                Console.WriteLine($"*************************\n*\tName: {User.Name}\t*\n*\tLevel: {User.Level}\t*\n*\tHp: {User.Health}/{User.Healthmax}\t*\n*\tExp: {User.Experience}/{User.Experiencecap}\t*\n*\tGold: {User.Gold} \t*\n*\tStrength: {User.Strength}\t*\n*\tToughness: {User.Toughness}\t*\n*************************\n");
+                Console.WriteLine($"*************************\n*\tName: {User.Name}\t*\n*\tLevel: {User.Level}\t*\n*\tHp: {User.Health}/{User.Healthmax}\t*\n*\tExp: {User.Experience}/{User.Experiencecap}\t*\n*\tGold: {User.Gold} \t*\n*\tStrength: {User.Strength}\t*\n*\tToughness: {User.Toughness}\t*\n*\tLuck: {User.Luck} \t*\n*************************\n");
                 Console.WriteLine($"*************************\n {Potion.Name}: {Potion.Total}\n {Amulet_Turtle.Name}: {Amulet_Turtle.Total}\n {Amulet_Bear.Name}: {Amulet_Bear.Total}\n {Lucky_Charm.Name}: {Lucky_Charm.Total}\n {Dragon_Slayer.Name}: {Dragon_Slayer.Total}\n*************************\n\nPress any key to return to the main menu...");
                 Console.ReadKey();
             }
@@ -102,7 +101,6 @@ namespace TextRPG
 
         static void Shop()
         {
-            int i = 0;
             bool loop = true;
             while (loop)
             {
